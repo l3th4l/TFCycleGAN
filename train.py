@@ -58,12 +58,12 @@ with tf.variable_scope('Model') as scope:
     b_cyc = nets.gen(a_gen, name = 'g_AtoB')
 
 #Discriminator loss for real inputs 
-loss_dis_a = tf.reduce_mean(tf.squared_difference(a_dis, 1))
-loss_dis_b = tf.reduce_mean(tf.squared_difference(b_dis, 1))
+loss_dis_a_1 = tf.reduce_mean(tf.squared_difference(a_dis, 1))
+loss_dis_b_1 = tf.reduce_mean(tf.squared_difference(b_dis, 1))
 
 #Discriminator loss for fake inputs
-loss_dis_a = tf.reduce_mean(tf.squared_difference(a_gen_dis, 0))
-loss_dis_b = tf.reduce_mean(tf.squared_difference(b_gen_dis, 0))
+loss_dis_a_2 = tf.reduce_mean(tf.squared_difference(a_gen_dis, 0))
+loss_dis_b_2 = tf.reduce_mean(tf.squared_difference(b_gen_dis, 0))
 
 #Generator loss
 loss_gen_a_1 = tf.reduce_mean(tf.squared_difference(a_gen_dis, 1))
@@ -75,6 +75,25 @@ loss_cyc = tf.reduce_mean(tf.squared_difference(a_real, a_cyc)) + tf.reduce_mean
 #Combined loss 
 loss_gen_a = loss_gen_a_1 + 10 * loss_cyc
 loss_gen_b = loss_gen_b_1 + 10 * loss_cyc
+loss_dis_a = (loss_dis_a_1 + loss_dis_a_2) / 2
+loss_dis_b = (loss_dis_b_1 + loss_dis_b_2) / 2
 
+#Trainable variables 
 tvars = tf.trainable_variables(scope = 'Model')
 
+var_gen_a = [v for v in tvars if 'g_BtoA' in v]
+var_gen_b = [v for v in tvars if 'g_AtoB' in v]
+var_dis_a = [v for v in tvars if 'disc_A' in v]
+var_dis_b = [v for v in tvars if 'disc_B' in v]
+
+#Learning rate
+lr = 0.01
+
+#Optimizer
+optimizer = tf.train.GradientDescentOptimizer(learning_rate = lr)
+
+#Optimize ops
+opt_gen_a = optimizer.minimize(loss_gen_a, var_list = var_gen_a)
+opt_gen_b = optimizer.minimize(loss_gen_b, var_list = var_gen_b)
+opt_dis_a = optimizer.minimize(loss_dis_a, var_list = var_dis_a)
+opt_dis_b = optimizer.minimize(loss_dis_b, var_list = var_dis_b)
