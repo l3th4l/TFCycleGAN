@@ -1,2 +1,11 @@
 #Dataset 
 Datasets/
+
+#Generated output
+gen_output/
+
+#Model
+models/
+
+#Losses
+losses/

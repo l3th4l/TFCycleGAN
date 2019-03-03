@@ -1,4 +1,5 @@
 from trainOps import * 
+from matplotlib import pyplot as plt
 
 #Losses
 losses_g_a = []
@@ -78,8 +79,16 @@ for epoch in range(epochs):
             saver.save(sess, './models/weights_%i/iter_%i.ckpt' % (epoch, i))
             
             #display generated faces
-            gen_b = sess.run(b_gen, feed_dict = {a_real : dat_a[:3]})
-            gen_a = sess.run(a_gen, feed_dict = {b_real : dat_b[:3]})
-            cyc_b = sess.run(b_cyc, feed_dict = {b_real : dat_b[:3]})
-            cyc_a = sess.run(a_cyc, feed_dict = {a_real : dat_a[:3]})
+            gen_b = sess.run(b_gen, feed_dict = {a_real : dat_a[:4]})
+            gen_a = sess.run(a_gen, feed_dict = {b_real : dat_b[:4]})
+            cyc_b = sess.run(b_cyc, feed_dict = {b_real : dat_b[:4]})
+            cyc_a = sess.run(a_cyc, feed_dict = {a_real : dat_a[:4]})
 
+            fig, ax = plt.subplots(4, 4, True, True)
+            for i in range(4):
+                ax[i, 0].imshow(gen_a)
+                ax[i, 1].imshow(gen_b)
+                ax[i, 2].imshow(cyc_a)
+                ax[i, 3].imshow(cyc_b)
+
+            fig.savefig('./gen_output/epoch_%i_%i' % (epoch, i))
