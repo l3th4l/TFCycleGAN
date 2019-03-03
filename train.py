@@ -72,7 +72,7 @@ for epoch in range(epochs):
                   (epoch, i, np.mean(l_d_a), np.mean(l_d_b), np.mean(l_g_a), np.mean(l_g_b)))
             
             #save the model
-            try:
+            try:    
                 os.mkdir('./models/weights_%i' % (epoch))
             except:
                 pass
