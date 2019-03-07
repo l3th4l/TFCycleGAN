@@ -9,3 +9,6 @@ models/
 
 #Losses
 losses/
+
+#pycahce 
+__pycache__/
